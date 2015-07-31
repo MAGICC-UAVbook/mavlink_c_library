@@ -137,12 +137,13 @@ static void mavlink_test_new_waypoint(uint8_t system_id, uint8_t component_id, m
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_new_waypoint_t packet_in = {
-		93372036854775807ULL,{ 73.0, 74.0, 75.0 },157.0,77,144
+		93372036854775807ULL,{ 73.0, 74.0, 75.0 },157.0,185.0,89,156
     };
 	mavlink_new_waypoint_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.time_usec = packet_in.time_usec;
         	packet1.chi_d = packet_in.chi_d;
+        	packet1.Va_d = packet_in.Va_d;
         	packet1.chi_valid = packet_in.chi_valid;
         	packet1.set_current = packet_in.set_current;
         
@@ -155,12 +156,12 @@ static void mavlink_test_new_waypoint(uint8_t system_id, uint8_t component_id, m
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_new_waypoint_pack(system_id, component_id, &msg , packet1.time_usec , packet1.w , packet1.chi_d , packet1.chi_valid , packet1.set_current );
+	mavlink_msg_new_waypoint_pack(system_id, component_id, &msg , packet1.time_usec , packet1.w , packet1.chi_d , packet1.chi_valid , packet1.Va_d , packet1.set_current );
 	mavlink_msg_new_waypoint_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_new_waypoint_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_usec , packet1.w , packet1.chi_d , packet1.chi_valid , packet1.set_current );
+	mavlink_msg_new_waypoint_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_usec , packet1.w , packet1.chi_d , packet1.chi_valid , packet1.Va_d , packet1.set_current );
 	mavlink_msg_new_waypoint_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -173,7 +174,7 @@ static void mavlink_test_new_waypoint(uint8_t system_id, uint8_t component_id, m
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_new_waypoint_send(MAVLINK_COMM_1 , packet1.time_usec , packet1.w , packet1.chi_d , packet1.chi_valid , packet1.set_current );
+	mavlink_msg_new_waypoint_send(MAVLINK_COMM_1 , packet1.time_usec , packet1.w , packet1.chi_d , packet1.chi_valid , packet1.Va_d , packet1.set_current );
 	mavlink_msg_new_waypoint_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }

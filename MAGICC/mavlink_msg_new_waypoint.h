@@ -7,26 +7,28 @@ typedef struct __mavlink_new_waypoint_t
  uint64_t time_usec; ///< Timestamp (microseconds since UNIX epoch or microseconds since system boot)
  float w[3]; ///< waypoint in local NED (m)
  float chi_d; ///< Desired course at this waypoint (rad)
+ float Va_d; ///< Desired airspeed at this waypoint (m/s)
  uint8_t chi_valid; ///< Desired course valid (boolean value)
  uint8_t set_current; ///< Sets this waypoint to be exicuted now! (boolean value)
 } mavlink_new_waypoint_t;
 
-#define MAVLINK_MSG_ID_NEW_WAYPOINT_LEN 26
-#define MAVLINK_MSG_ID_152_LEN 26
+#define MAVLINK_MSG_ID_NEW_WAYPOINT_LEN 30
+#define MAVLINK_MSG_ID_152_LEN 30
 
-#define MAVLINK_MSG_ID_NEW_WAYPOINT_CRC 95
-#define MAVLINK_MSG_ID_152_CRC 95
+#define MAVLINK_MSG_ID_NEW_WAYPOINT_CRC 173
+#define MAVLINK_MSG_ID_152_CRC 173
 
 #define MAVLINK_MSG_NEW_WAYPOINT_FIELD_W_LEN 3
 
 #define MAVLINK_MESSAGE_INFO_NEW_WAYPOINT { \
 	"NEW_WAYPOINT", \
-	5, \
+	6, \
 	{  { "time_usec", NULL, MAVLINK_TYPE_UINT64_T, 0, 0, offsetof(mavlink_new_waypoint_t, time_usec) }, \
          { "w", NULL, MAVLINK_TYPE_FLOAT, 3, 8, offsetof(mavlink_new_waypoint_t, w) }, \
          { "chi_d", NULL, MAVLINK_TYPE_FLOAT, 0, 20, offsetof(mavlink_new_waypoint_t, chi_d) }, \
-         { "chi_valid", NULL, MAVLINK_TYPE_UINT8_T, 0, 24, offsetof(mavlink_new_waypoint_t, chi_valid) }, \
-         { "set_current", NULL, MAVLINK_TYPE_UINT8_T, 0, 25, offsetof(mavlink_new_waypoint_t, set_current) }, \
+         { "Va_d", NULL, MAVLINK_TYPE_FLOAT, 0, 24, offsetof(mavlink_new_waypoint_t, Va_d) }, \
+         { "chi_valid", NULL, MAVLINK_TYPE_UINT8_T, 0, 28, offsetof(mavlink_new_waypoint_t, chi_valid) }, \
+         { "set_current", NULL, MAVLINK_TYPE_UINT8_T, 0, 29, offsetof(mavlink_new_waypoint_t, set_current) }, \
          } \
 }
 
@@ -41,24 +43,27 @@ typedef struct __mavlink_new_waypoint_t
  * @param w waypoint in local NED (m)
  * @param chi_d Desired course at this waypoint (rad)
  * @param chi_valid Desired course valid (boolean value)
+ * @param Va_d Desired airspeed at this waypoint (m/s)
  * @param set_current Sets this waypoint to be exicuted now! (boolean value)
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_new_waypoint_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       uint64_t time_usec, const float *w, float chi_d, uint8_t chi_valid, uint8_t set_current)
+						       uint64_t time_usec, const float *w, float chi_d, uint8_t chi_valid, float Va_d, uint8_t set_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_NEW_WAYPOINT_LEN];
 	_mav_put_uint64_t(buf, 0, time_usec);
 	_mav_put_float(buf, 20, chi_d);
-	_mav_put_uint8_t(buf, 24, chi_valid);
-	_mav_put_uint8_t(buf, 25, set_current);
+	_mav_put_float(buf, 24, Va_d);
+	_mav_put_uint8_t(buf, 28, chi_valid);
+	_mav_put_uint8_t(buf, 29, set_current);
 	_mav_put_float_array(buf, 8, w, 3);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_NEW_WAYPOINT_LEN);
 #else
 	mavlink_new_waypoint_t packet;
 	packet.time_usec = time_usec;
 	packet.chi_d = chi_d;
+	packet.Va_d = Va_d;
 	packet.chi_valid = chi_valid;
 	packet.set_current = set_current;
 	mav_array_memcpy(packet.w, w, sizeof(float)*3);
@@ -83,25 +88,28 @@ static inline uint16_t mavlink_msg_new_waypoint_pack(uint8_t system_id, uint8_t 
  * @param w waypoint in local NED (m)
  * @param chi_d Desired course at this waypoint (rad)
  * @param chi_valid Desired course valid (boolean value)
+ * @param Va_d Desired airspeed at this waypoint (m/s)
  * @param set_current Sets this waypoint to be exicuted now! (boolean value)
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_new_waypoint_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           uint64_t time_usec,const float *w,float chi_d,uint8_t chi_valid,uint8_t set_current)
+						           uint64_t time_usec,const float *w,float chi_d,uint8_t chi_valid,float Va_d,uint8_t set_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_NEW_WAYPOINT_LEN];
 	_mav_put_uint64_t(buf, 0, time_usec);
 	_mav_put_float(buf, 20, chi_d);
-	_mav_put_uint8_t(buf, 24, chi_valid);
-	_mav_put_uint8_t(buf, 25, set_current);
+	_mav_put_float(buf, 24, Va_d);
+	_mav_put_uint8_t(buf, 28, chi_valid);
+	_mav_put_uint8_t(buf, 29, set_current);
 	_mav_put_float_array(buf, 8, w, 3);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_NEW_WAYPOINT_LEN);
 #else
 	mavlink_new_waypoint_t packet;
 	packet.time_usec = time_usec;
 	packet.chi_d = chi_d;
+	packet.Va_d = Va_d;
 	packet.chi_valid = chi_valid;
 	packet.set_current = set_current;
 	mav_array_memcpy(packet.w, w, sizeof(float)*3);
@@ -126,7 +134,7 @@ static inline uint16_t mavlink_msg_new_waypoint_pack_chan(uint8_t system_id, uin
  */
 static inline uint16_t mavlink_msg_new_waypoint_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_new_waypoint_t* new_waypoint)
 {
-	return mavlink_msg_new_waypoint_pack(system_id, component_id, msg, new_waypoint->time_usec, new_waypoint->w, new_waypoint->chi_d, new_waypoint->chi_valid, new_waypoint->set_current);
+	return mavlink_msg_new_waypoint_pack(system_id, component_id, msg, new_waypoint->time_usec, new_waypoint->w, new_waypoint->chi_d, new_waypoint->chi_valid, new_waypoint->Va_d, new_waypoint->set_current);
 }
 
 /**
@@ -140,7 +148,7 @@ static inline uint16_t mavlink_msg_new_waypoint_encode(uint8_t system_id, uint8_
  */
 static inline uint16_t mavlink_msg_new_waypoint_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_new_waypoint_t* new_waypoint)
 {
-	return mavlink_msg_new_waypoint_pack_chan(system_id, component_id, chan, msg, new_waypoint->time_usec, new_waypoint->w, new_waypoint->chi_d, new_waypoint->chi_valid, new_waypoint->set_current);
+	return mavlink_msg_new_waypoint_pack_chan(system_id, component_id, chan, msg, new_waypoint->time_usec, new_waypoint->w, new_waypoint->chi_d, new_waypoint->chi_valid, new_waypoint->Va_d, new_waypoint->set_current);
 }
 
 /**
@@ -151,18 +159,20 @@ static inline uint16_t mavlink_msg_new_waypoint_encode_chan(uint8_t system_id, u
  * @param w waypoint in local NED (m)
  * @param chi_d Desired course at this waypoint (rad)
  * @param chi_valid Desired course valid (boolean value)
+ * @param Va_d Desired airspeed at this waypoint (m/s)
  * @param set_current Sets this waypoint to be exicuted now! (boolean value)
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_new_waypoint_send(mavlink_channel_t chan, uint64_t time_usec, const float *w, float chi_d, uint8_t chi_valid, uint8_t set_current)
+static inline void mavlink_msg_new_waypoint_send(mavlink_channel_t chan, uint64_t time_usec, const float *w, float chi_d, uint8_t chi_valid, float Va_d, uint8_t set_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_NEW_WAYPOINT_LEN];
 	_mav_put_uint64_t(buf, 0, time_usec);
 	_mav_put_float(buf, 20, chi_d);
-	_mav_put_uint8_t(buf, 24, chi_valid);
-	_mav_put_uint8_t(buf, 25, set_current);
+	_mav_put_float(buf, 24, Va_d);
+	_mav_put_uint8_t(buf, 28, chi_valid);
+	_mav_put_uint8_t(buf, 29, set_current);
 	_mav_put_float_array(buf, 8, w, 3);
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NEW_WAYPOINT, buf, MAVLINK_MSG_ID_NEW_WAYPOINT_LEN, MAVLINK_MSG_ID_NEW_WAYPOINT_CRC);
@@ -173,6 +183,7 @@ static inline void mavlink_msg_new_waypoint_send(mavlink_channel_t chan, uint64_
 	mavlink_new_waypoint_t packet;
 	packet.time_usec = time_usec;
 	packet.chi_d = chi_d;
+	packet.Va_d = Va_d;
 	packet.chi_valid = chi_valid;
 	packet.set_current = set_current;
 	mav_array_memcpy(packet.w, w, sizeof(float)*3);
@@ -192,14 +203,15 @@ static inline void mavlink_msg_new_waypoint_send(mavlink_channel_t chan, uint64_
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_new_waypoint_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint64_t time_usec, const float *w, float chi_d, uint8_t chi_valid, uint8_t set_current)
+static inline void mavlink_msg_new_waypoint_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint64_t time_usec, const float *w, float chi_d, uint8_t chi_valid, float Va_d, uint8_t set_current)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
 	_mav_put_uint64_t(buf, 0, time_usec);
 	_mav_put_float(buf, 20, chi_d);
-	_mav_put_uint8_t(buf, 24, chi_valid);
-	_mav_put_uint8_t(buf, 25, set_current);
+	_mav_put_float(buf, 24, Va_d);
+	_mav_put_uint8_t(buf, 28, chi_valid);
+	_mav_put_uint8_t(buf, 29, set_current);
 	_mav_put_float_array(buf, 8, w, 3);
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NEW_WAYPOINT, buf, MAVLINK_MSG_ID_NEW_WAYPOINT_LEN, MAVLINK_MSG_ID_NEW_WAYPOINT_CRC);
@@ -210,6 +222,7 @@ static inline void mavlink_msg_new_waypoint_send_buf(mavlink_message_t *msgbuf, 
 	mavlink_new_waypoint_t *packet = (mavlink_new_waypoint_t *)msgbuf;
 	packet->time_usec = time_usec;
 	packet->chi_d = chi_d;
+	packet->Va_d = Va_d;
 	packet->chi_valid = chi_valid;
 	packet->set_current = set_current;
 	mav_array_memcpy(packet->w, w, sizeof(float)*3);
@@ -264,7 +277,17 @@ static inline float mavlink_msg_new_waypoint_get_chi_d(const mavlink_message_t* 
  */
 static inline uint8_t mavlink_msg_new_waypoint_get_chi_valid(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  24);
+	return _MAV_RETURN_uint8_t(msg,  28);
+}
+
+/**
+ * @brief Get field Va_d from new_waypoint message
+ *
+ * @return Desired airspeed at this waypoint (m/s)
+ */
+static inline float mavlink_msg_new_waypoint_get_Va_d(const mavlink_message_t* msg)
+{
+	return _MAV_RETURN_float(msg,  24);
 }
 
 /**
@@ -274,7 +297,7 @@ static inline uint8_t mavlink_msg_new_waypoint_get_chi_valid(const mavlink_messa
  */
 static inline uint8_t mavlink_msg_new_waypoint_get_set_current(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  25);
+	return _MAV_RETURN_uint8_t(msg,  29);
 }
 
 /**
@@ -289,6 +312,7 @@ static inline void mavlink_msg_new_waypoint_decode(const mavlink_message_t* msg,
 	new_waypoint->time_usec = mavlink_msg_new_waypoint_get_time_usec(msg);
 	mavlink_msg_new_waypoint_get_w(msg, new_waypoint->w);
 	new_waypoint->chi_d = mavlink_msg_new_waypoint_get_chi_d(msg);
+	new_waypoint->Va_d = mavlink_msg_new_waypoint_get_Va_d(msg);
 	new_waypoint->chi_valid = mavlink_msg_new_waypoint_get_chi_valid(msg);
 	new_waypoint->set_current = mavlink_msg_new_waypoint_get_set_current(msg);
 #else
